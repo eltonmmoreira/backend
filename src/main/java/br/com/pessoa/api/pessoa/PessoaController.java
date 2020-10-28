@@ -1,18 +1,23 @@
 package br.com.pessoa.api.pessoa;
 
-import br.com.pessoa.api.util.MessageUtil;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("pessoa")
 public class PessoaController {
 
-    @GetMapping
-    public String teste(@RequestParam String key) {
-        return MessageUtil.get(key);
+    private final PessoaService pessoaService;
+
+    public PessoaController(PessoaService pessoaService) {
+        this.pessoaService = pessoaService;
     }
 
+    @PostMapping("/list")
+    public Page<PessoaDto> findAll(@RequestParam int page,
+                                   @RequestParam int size,
+                                   @RequestBody(required = false) PessoaFiltro filtro) {
+        return pessoaService.findAll(filtro, PageRequest.of(page, size));
+    }
 }
