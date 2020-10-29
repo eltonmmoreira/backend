@@ -25,6 +25,7 @@ public class PessoaRepositoryImpl implements PessoaRepository {
         var pessoa = QPessoa.pessoa;
         var query = jpaQuery.select(
                 Projections.constructor(PessoaDto.class,
+                pessoa.id,
                 pessoa.nome,
                 pessoa.cpf,
                 pessoa.dataDeNascimento,
