@@ -1,4 +1,4 @@
-package br.com.pessoa.api.upload;
+package br.com.pessoa.api.file;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -13,14 +13,14 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @PostMapping(value = "upload/pessoa/{id}")
-    public void upload(MultipartHttpServletRequest file, @PathVariable Long id) {
+    @PostMapping(value = "/upload/pessoa/{id}")
+    public void upload(MultipartHttpServletRequest file, @PathVariable Integer id) {
         fileService.upload(file.getFile("image"), id);
     }
 
-    @GetMapping(value = "file/pessoa/{id}")
-    public String findFile(@PathVariable Long id) {
-        return fileService.findFile(id);
+    @GetMapping(value = "/file/pessoa/{id}")
+    public String findFile(@PathVariable Integer id) {
+        return fileService.findFile(id).orElse(null);
     }
 
 }

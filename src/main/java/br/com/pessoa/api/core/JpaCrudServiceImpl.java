@@ -18,6 +18,14 @@ public abstract class JpaCrudServiceImpl<T, ID extends Serializable>
 
     protected abstract JpaRepository<T, ID> getData();
 
+    protected void postFindById(T entity) {
+
+    }
+
+    protected void postSave(T entity) {
+
+    }
+
     public JpaCrudServiceImpl() {
         this.persistentClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass())
                 .getActualTypeArguments()[0];
@@ -28,6 +36,7 @@ public abstract class JpaCrudServiceImpl<T, ID extends Serializable>
         try {
             entity = getData().save(entity);
             log.info("[save]-" + persistentClass + "[entity]-" + entity.toString());
+            postSave(entity);
             return entity;
         } catch (Exception e) {
             log.error("[save]-" + persistentClass);
@@ -46,7 +55,9 @@ public abstract class JpaCrudServiceImpl<T, ID extends Serializable>
     @Transactional(readOnly = true)
     public T findById(ID id) {
         log.info("[findById]-" + persistentClass + "[id]-" + id);
-        return getData().findById(id).orElse(null);
+        var entity = getData().findById(id).orElse(null);
+        postFindById(entity);
+        return entity;
     }
 
     @Override

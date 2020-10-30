@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 public class PessoaDto {
-    private Long id;
+    private Integer id;
     private String nome;
     private String cpf;
     private LocalDate dataDeNascimento;

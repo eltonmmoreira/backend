@@ -1,6 +1,7 @@
 package br.com.pessoa.api.pessoa;
 
 import br.com.pessoa.api.core.JpaCrudServiceImpl;
+import br.com.pessoa.api.file.FileService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,18 +9,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PessoaServiceImpl extends JpaCrudServiceImpl<Pessoa, Long> implements PessoaService {
+public class PessoaServiceImpl extends JpaCrudServiceImpl<Pessoa, Integer> implements PessoaService {
     
     private final PessoaData pessoaData;
     private final PessoaRepository pessoaRepository;
+    private final FileService fileService;
     
-    public PessoaServiceImpl(PessoaData pessoaData, PessoaRepository pessoaRepository) {
+    public PessoaServiceImpl(PessoaData pessoaData, PessoaRepository pessoaRepository, FileService fileService) {
         this.pessoaData = pessoaData;
         this.pessoaRepository = pessoaRepository;
+        this.fileService = fileService;
     }
 
     @Override
-    protected JpaRepository<Pessoa, Long> getData() {
+    protected JpaRepository<Pessoa, Integer> getData() {
         return pessoaData;
     }
 
@@ -27,5 +30,12 @@ public class PessoaServiceImpl extends JpaCrudServiceImpl<Pessoa, Long> implemen
     @Transactional(readOnly = true)
     public Page<PessoaDto> findAll(PessoaFiltro filtro, Pageable pageable) {
         return pessoaRepository.findAll(filtro, pageable);
+    }
+
+    @Override
+    protected void postFindById(Pessoa entity) {
+        if (Boolean.TRUE.equals(entity.getTemImagem())) {
+            fileService.findFile(entity.getId()).ifPresent(entity::setImage);
+        }
     }
 }

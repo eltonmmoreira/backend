@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("pessoa")
-public class PessoaController extends RestControllerImpl<Pessoa, Long>
-        implements br.com.pessoa.api.core.RestController<Pessoa, Long> {
+public class PessoaController extends RestControllerImpl<Pessoa, Integer>
+        implements br.com.pessoa.api.core.RestController<Pessoa, Integer> {
 
     private final PessoaService pessoaService;
 
@@ -18,7 +18,7 @@ public class PessoaController extends RestControllerImpl<Pessoa, Long>
     }
 
     @Override
-    protected CrudService<Pessoa, Long> getService() {
+    protected CrudService<Pessoa, Integer> getService() {
         return pessoaService;
     }
 
