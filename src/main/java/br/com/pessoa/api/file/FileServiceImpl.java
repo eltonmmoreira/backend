@@ -41,22 +41,40 @@ public class FileServiceImpl extends JpaCrudServiceImpl<File, Integer> implement
             }
 
             var extension = getExtensionByFilename(multipartFile.getOriginalFilename()).orElseThrow();
-            var filename = idPessoa + "." + extension;
+            var file = save(multipartFile, idPessoa, extension);
 
-            var path = Paths.get(root + root.getFileSystem().getSeparator() + filename);
-            Files.deleteIfExists(path);
-
-            Files.copy(multipartFile.getInputStream(), this.root.resolve(filename));
-
-            save(File.builder()
-                    .nomeOriginal(multipartFile.getOriginalFilename())
-                    .nome(idPessoa.toString())
-                    .idPessoa(idPessoa)
-                    .extensao(extension)
-                    .build());
+            try {
+                createFile(multipartFile, idPessoa, extension);
+            } catch (IOException e) {
+                fileData.deleteById(file.getId());
+                throw new RuntimeException(e);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    private File save(MultipartFile multipartFile, Integer idPessoa, String extension) throws IOException {
+        var file = fileData.findByIdPessoa(idPessoa).orElse(null);
+
+        if (file != null) {
+            var path = Paths.get(root + root.getFileSystem().getSeparator()
+                    + file.getNome() + "." + file.getExtensao());
+            Files.deleteIfExists(path);
+        }
+
+        return save(File.builder()
+                .id(file != null ? file.getId() : null)
+                .nomeOriginal(multipartFile.getOriginalFilename())
+                .nome(idPessoa.toString())
+                .idPessoa(idPessoa)
+                .extensao(extension)
+                .build());
+    }
+
+    private void createFile(MultipartFile multipartFile, Integer idPessoa, String extension) throws IOException {
+        var filename = idPessoa + "." + extension;
+        Files.copy(multipartFile.getInputStream(), this.root.resolve(filename));
     }
 
     @Override
@@ -68,7 +86,12 @@ public class FileServiceImpl extends JpaCrudServiceImpl<File, Integer> implement
     public Optional<String> findFile(Integer id) {
         try {
             var file = fileData.findByIdPessoa(id);
-            var filename = file.getNome() + "." + file.getExtensao();
+
+            if (file.isEmpty()) {
+                return Optional.empty();
+            }
+
+            var filename = file.get().getNome() + "." + file.get().getExtensao();
 
             byte[] fileContent = Files.readAllBytes(
                     Paths.get(root + root.getFileSystem().getSeparator() + filename)

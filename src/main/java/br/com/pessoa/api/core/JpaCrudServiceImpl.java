@@ -26,6 +26,10 @@ public abstract class JpaCrudServiceImpl<T, ID extends Serializable>
 
     }
 
+    protected void preSave(T entity) {
+
+    }
+
     public JpaCrudServiceImpl() {
         this.persistentClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass())
                 .getActualTypeArguments()[0];
@@ -34,6 +38,7 @@ public abstract class JpaCrudServiceImpl<T, ID extends Serializable>
     @Override
     public T save(T entity) {
         try {
+            preSave(entity);
             entity = getData().save(entity);
             log.info("[save]-" + persistentClass + "[entity]-" + entity.toString());
             postSave(entity);
