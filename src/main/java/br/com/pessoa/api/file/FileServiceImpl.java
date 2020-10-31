@@ -83,23 +83,20 @@ public class FileServiceImpl extends JpaCrudServiceImpl<File, Integer> implement
     }
 
     @Override
-    public Optional<String> findFile(Integer id) {
-        try {
-            var file = fileData.findByIdPessoa(id);
+    public Optional<String> findFile(Integer id) throws IOException {
+        var file = fileData.findByIdPessoa(id);
 
-            if (file.isEmpty()) {
-                return Optional.empty();
-            }
-
-            var filename = file.get().getNome() + "." + file.get().getExtensao();
-
-            byte[] fileContent = Files.readAllBytes(
-                    Paths.get(root + root.getFileSystem().getSeparator() + filename)
-            );
-            return Optional.ofNullable(Base64.getEncoder().encodeToString(fileContent));
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+        if (file.isEmpty()) {
+            return Optional.empty();
         }
+
+        var filename = file.get().getNome() + "." + file.get().getExtensao();
+
+        byte[] fileContent = Files.readAllBytes(
+                Paths.get(root + root.getFileSystem().getSeparator() + filename)
+        );
+        var data = "data:image/"+ file.get().getExtensao() +";base64,";
+        return Optional.of(data + Base64.getEncoder().encodeToString(fileContent));
     }
 
     private Optional<String> getExtensionByFilename(String filename) {

@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+
 @Service
 public class PessoaServiceImpl extends JpaCrudServiceImpl<Pessoa, Integer> implements PessoaService {
     
@@ -33,9 +35,22 @@ public class PessoaServiceImpl extends JpaCrudServiceImpl<Pessoa, Integer> imple
     }
 
     @Override
+    protected void postSave(Pessoa entity) {
+        carregarImagem(entity);
+    }
+
+    @Override
     protected void postFindById(Pessoa entity) {
+        carregarImagem(entity);
+    }
+
+    private void carregarImagem(Pessoa entity) {
         if (Boolean.TRUE.equals(entity.getTemImagem())) {
-            fileService.findFile(entity.getId()).ifPresent(entity::setImage);
+            try {
+                fileService.findFile(entity.getId()).ifPresent(entity::setImage);
+            } catch (IOException e) {
+                getLog().error(this.getClass(), e);
+            }
         }
     }
 }

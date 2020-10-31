@@ -1,6 +1,7 @@
 package br.com.pessoa.api.core;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Logger;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,10 @@ public abstract class JpaCrudServiceImpl<T, ID extends Serializable>
     private final Class<T> persistentClass;
 
     protected abstract JpaRepository<T, ID> getData();
+
+    public static Logger getLog() {
+        return log;
+    }
 
     protected void postFindById(T entity) {
 

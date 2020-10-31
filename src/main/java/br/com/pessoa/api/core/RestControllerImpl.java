@@ -11,7 +11,7 @@ public abstract class RestControllerImpl<T, ID extends Serializable>
 
     @Override
     @GetMapping("/{id}")
-    public T findById(@PathVariable ID id) {
+    public T findById(@PathVariable ID id) throws Exception {
         return getService().findById(id);
     }
 

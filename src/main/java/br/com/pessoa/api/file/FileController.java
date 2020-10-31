@@ -18,9 +18,13 @@ public class FileController {
         fileService.upload(file.getFile("image"), id);
     }
 
-    @GetMapping(value = "/file/pessoa/{id}")
+    @GetMapping(value = "/pessoa/{id}")
     public String findFile(@PathVariable Integer id) {
-        return fileService.findFile(id).orElse(null);
+        try {
+            return fileService.findFile(id).orElse(null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
