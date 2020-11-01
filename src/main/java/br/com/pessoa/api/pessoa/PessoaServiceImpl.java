@@ -35,6 +35,13 @@ public class PessoaServiceImpl extends JpaCrudServiceImpl<Pessoa, Integer> imple
     }
 
     @Override
+    protected void preSave(Pessoa entity) {
+        if (entity.getId() == null) {
+            entity.setTemImagem(false);
+        }
+    }
+
+    @Override
     protected void postSave(Pessoa entity) {
         carregarImagem(entity);
     }

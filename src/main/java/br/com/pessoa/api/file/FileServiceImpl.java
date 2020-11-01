@@ -2,6 +2,8 @@ package br.com.pessoa.api.file;
 
 import br.com.pessoa.api.core.JpaCrudServiceImpl;
 import br.com.pessoa.api.file.event.PostFileUploadEvent;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,7 @@ import java.util.Optional;
 @Service
 public class FileServiceImpl extends JpaCrudServiceImpl<File, Integer> implements FileService {
 
-    private final Path root = Paths.get("uploads");
+    private final Path root;
 
     private final ApplicationEventPublisher publisher;
 
@@ -28,9 +30,12 @@ public class FileServiceImpl extends JpaCrudServiceImpl<File, Integer> implement
         return fileData;
     }
 
-    public FileServiceImpl(ApplicationEventPublisher publisher, FileData fileData) {
+    public FileServiceImpl(ApplicationEventPublisher publisher,
+                           FileData fileData,
+                           @Value("${uploadPath}") String uploadPath) {
         this.publisher = publisher;
         this.fileData = fileData;
+        this.root = Paths.get(StringUtils.isNotBlank(uploadPath) ? uploadPath : "uploads");
     }
 
     @Override
@@ -75,6 +80,7 @@ public class FileServiceImpl extends JpaCrudServiceImpl<File, Integer> implement
     private void createFile(MultipartFile multipartFile, Integer idPessoa, String extension) throws IOException {
         var filename = idPessoa + "." + extension;
         Files.copy(multipartFile.getInputStream(), this.root.resolve(filename));
+        getLog().info(String.format("Arquivo %s gravado com sucesso!", filename));
     }
 
     @Override
@@ -95,7 +101,7 @@ public class FileServiceImpl extends JpaCrudServiceImpl<File, Integer> implement
         byte[] fileContent = Files.readAllBytes(
                 Paths.get(root + root.getFileSystem().getSeparator() + filename)
         );
-        var data = "data:image/"+ file.get().getExtensao() +";base64,";
+        var data = String.format("data:image/%s;base64,", file.get().getExtensao());
         return Optional.of(data + Base64.getEncoder().encodeToString(fileContent));
     }
 
