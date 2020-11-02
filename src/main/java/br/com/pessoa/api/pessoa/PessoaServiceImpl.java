@@ -2,7 +2,11 @@ package br.com.pessoa.api.pessoa;
 
 import br.com.pessoa.api.core.BaseCrudRepository;
 import br.com.pessoa.api.core.JpaCrudServiceImpl;
+import br.com.pessoa.api.core.Status;
+import br.com.pessoa.api.exception.CpfDuplicadoException;
 import br.com.pessoa.api.file.FileService;
+import br.com.pessoa.api.util.MessageUtil;
+import br.com.pessoa.api.validator.PessoaValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Validated
 @Service
@@ -48,32 +53,21 @@ public class PessoaServiceImpl extends JpaCrudServiceImpl<Pessoa, Integer> imple
             entity.setCpf(entity.getCpf().replaceAll("\\D+", ""));
         }
 
-    }
-
-    @Override
-    public Pessoa save(Pessoa entity) {
-        try {
-            return super.save(entity);
-        } catch (Exception e) {
-            if (e.getMessage().contains("uk_cpf")) {
-                throw new RuntimeException("CPF já cadastrado!");
-            }
-            throw new RuntimeException(e);
-        }
-
+        PessoaValidator.of(entity, pessoaData).validate();
     }
 
     @Override
     protected void postSave(Pessoa entity) {
-        carregarImagem(entity);
+        carregarImagem().accept(entity);
     }
 
     @Override
     protected void postFindById(Pessoa entity) {
-        carregarImagem(entity);
+        carregarImagem().accept(entity);
     }
 
-    private void carregarImagem(Pessoa entity) {
+    private Consumer<Pessoa> carregarImagem() {
+        return (entity) ->
         Optional.ofNullable(entity).ifPresent(pessoa -> {
             if (Boolean.TRUE.equals(pessoa.getTemImagem())) {
                 try {

@@ -1,5 +1,7 @@
 package br.com.pessoa.api.core;
 
+import br.com.pessoa.api.exception.Error;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -8,9 +10,8 @@ import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
+@Log4j2
 public abstract class RestControllerImpl<T extends BaseEntity, ID extends Serializable>
         implements RestController<T, ID> {
 
@@ -42,18 +43,24 @@ public abstract class RestControllerImpl<T extends BaseEntity, ID extends Serial
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, Map<String, String>> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-        Map<String, Map<String, String>> errors = new HashMap<>();
+    public Error handleError(MethodArgumentNotValidException e) {
+        Map<String, Object> errors = new HashMap<>();
 
-        ex.getBindingResult().getFieldErrors().forEach(error -> {
-            var key = "messageValidation";
-            var map = Optional.ofNullable(errors.get(key)).orElse(new HashMap<>());
-            map.put(error.getField(),
-                    Objects.requireNonNull(error.getDefaultMessage())
-            );
-            errors.put(key, map);
-        });
+        var error = new Error(e.getMessage(), e.getClass().getSimpleName());
+        e.getBindingResult().getFieldErrors().forEach(fieldError ->
+                errors.put(fieldError.getField(), fieldError.getDefaultMessage()));
+        error.setParameters(errors);
+        log.error(e);
+        return error;
+    }
 
-        return errors;
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(Exception.class)
+    public Error handleError(Exception e) {
+        log.error(e);
+        if (e.getCause() != null) {
+            return new Error(e.getCause().getMessage(), e.getCause().getClass().getSimpleName());
+        }
+        return new Error(e.getMessage(), e.getClass().getSimpleName());
     }
 }

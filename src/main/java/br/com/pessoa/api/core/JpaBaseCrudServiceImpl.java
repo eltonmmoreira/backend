@@ -3,6 +3,7 @@ package br.com.pessoa.api.core;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -39,6 +40,7 @@ public abstract class JpaBaseCrudServiceImpl<T, ID extends Serializable>
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public T save(T entity) {
         try {
             preSave(entity);

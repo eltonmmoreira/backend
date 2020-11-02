@@ -9,6 +9,7 @@ import lombok.ToString;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -16,9 +17,12 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@ToString(of = {"id", "nome", "cpf"})
+@ToString(of = {"nome", "cpf"})
 @Entity
-@Table(name = "PESSOA")
+@Table(name = "PESSOA",
+    uniqueConstraints = @UniqueConstraint(
+            columnNames = {"CPF", "STATUS"})
+)
 public class Pessoa extends BaseEntity {
 
     @NotNull(message = "{nome.notnull}")
@@ -36,6 +40,7 @@ public class Pessoa extends BaseEntity {
     @Column(name = "DATA_NASCIMENTO", nullable = false)
     private LocalDate dataDeNascimento;
 
+    @NotEmpty(message = "{cpf.notnull}")
     @NotNull(message = "{email.notnull}")
     @Size(message = "{email.size}", max = 400)
     @Column(name = "EMAIL", length = 400, nullable = false)

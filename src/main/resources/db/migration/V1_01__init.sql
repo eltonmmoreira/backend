@@ -6,6 +6,3 @@ create table PESSOA (
         NOME varchar(150) not null,
         primary key (ID)
     );
-
-    alter table if exists PESSOA
-       add constraint UK_CPF unique (CPF)
