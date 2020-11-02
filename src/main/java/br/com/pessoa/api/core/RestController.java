@@ -2,9 +2,9 @@ package br.com.pessoa.api.core;
 
 import java.io.Serializable;
 
-public interface RestController<T, ID extends Serializable> {
+public interface RestController<T extends BaseEntity, ID extends Serializable> {
 
-    T findById(ID id) throws Exception;
+    T findById(ID id);
 
     T save(T entity);
 

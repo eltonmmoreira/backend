@@ -5,10 +5,9 @@ import lombok.*;
 import javax.persistence.*;
 
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "FILE")
 public class File {
@@ -16,7 +15,7 @@ public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    private Integer id;
+    protected Integer id;
 
     @Column(name = "ID_PESSOA", nullable = false)
     private Integer idPessoa;
@@ -29,4 +28,5 @@ public class File {
 
     @Column(name = "NOME", nullable = false, length = 100)
     private String nome;
+
 }

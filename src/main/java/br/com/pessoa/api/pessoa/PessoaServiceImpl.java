@@ -1,14 +1,15 @@
 package br.com.pessoa.api.pessoa;
 
+import br.com.pessoa.api.core.BaseCrudRepository;
 import br.com.pessoa.api.core.JpaCrudServiceImpl;
 import br.com.pessoa.api.file.FileService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 public class PessoaServiceImpl extends JpaCrudServiceImpl<Pessoa, Integer> implements PessoaService {
@@ -24,7 +25,7 @@ public class PessoaServiceImpl extends JpaCrudServiceImpl<Pessoa, Integer> imple
     }
 
     @Override
-    protected JpaRepository<Pessoa, Integer> getData() {
+    protected BaseCrudRepository<Pessoa, Integer> getData() {
         return pessoaData;
     }
 
@@ -52,12 +53,14 @@ public class PessoaServiceImpl extends JpaCrudServiceImpl<Pessoa, Integer> imple
     }
 
     private void carregarImagem(Pessoa entity) {
-        if (Boolean.TRUE.equals(entity.getTemImagem())) {
-            try {
-                fileService.findFile(entity.getId()).ifPresent(entity::setImage);
-            } catch (IOException e) {
-                getLog().error(this.getClass(), e);
+        Optional.ofNullable(entity).ifPresent(pessoa -> {
+            if (Boolean.TRUE.equals(pessoa.getTemImagem())) {
+                try {
+                    fileService.findFile(pessoa.getId()).ifPresent(pessoa::setImage);
+                } catch (IOException e) {
+                    getLog().error(this.getClass(), e);
+                }
             }
-        }
+        });
     }
 }

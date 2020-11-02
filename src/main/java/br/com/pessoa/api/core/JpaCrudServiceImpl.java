@@ -1,78 +1,42 @@
 package br.com.pessoa.api.core;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.Logger;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
+import java.util.Collections;
 import java.util.List;
 
 @Log4j2
-@Service
-public abstract class JpaCrudServiceImpl<T, ID extends Serializable>
-        implements CrudService<T, ID> {
+public abstract class JpaCrudServiceImpl<T extends BaseEntity, ID extends Serializable>
+        extends JpaBaseCrudServiceImpl<T, ID> implements CrudService<T, ID> {
 
-    private final Class<T> persistentClass;
-
-    protected abstract JpaRepository<T, ID> getData();
-
-    public static Logger getLog() {
-        return log;
-    }
-
-    protected void postFindById(T entity) {
-
-    }
-
-    protected void postSave(T entity) {
-
-    }
-
-    protected void preSave(T entity) {
-
-    }
-
-    public JpaCrudServiceImpl() {
-        this.persistentClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass())
-                .getActualTypeArguments()[0];
-    }
+    protected abstract BaseCrudRepository<T, ID> getData();
 
     @Override
-    public T save(T entity) {
-        try {
-            preSave(entity);
-            entity = getData().save(entity);
-            log.info("[save]-" + persistentClass + "[entity]-" + entity.toString());
-            postSave(entity);
-            return entity;
-        } catch (Exception e) {
-            log.error("[save]-" + persistentClass);
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<T> findAll() {
-        log.info("[findAll]-" + persistentClass);
-        return getData().findAll();
+        return getData().findAllByStatus(Status.ATIVO).orElse(Collections.emptyList());
     }
 
     @Override
-    @Transactional(readOnly = true)
     public T findById(ID id) {
-        log.info("[findById]-" + persistentClass + "[id]-" + id);
-        var entity = getData().findById(id).orElse(null);
+        var entity = getData().findByIdAndStatus(id, Status.ATIVO).orElse(null);
         postFindById(entity);
         return entity;
     }
 
     @Override
+    public T save(T entity) {
+        if (entity.getId() == null) {
+            entity.setStatus(Status.ATIVO);
+        }
+        return super.save(entity);
+    }
+
+    @Override
     public void delete(ID id) {
-        log.info("[delete]-" + persistentClass + "[id]-" + id);
-        getData().deleteById(id);
+        getData().findById(id).ifPresent(entity -> {
+            entity.setStatus(Status.EXCLUIDO);
+            getData().save(entity);
+        });
     }
 }

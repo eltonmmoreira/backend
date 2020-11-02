@@ -1,25 +1,21 @@
 package br.com.pessoa.api.pessoa;
 
-import lombok.EqualsAndHashCode;
+import br.com.pessoa.api.core.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "nome", "cpf"})
 @Entity
 @Table(name = "PESSOA")
-public class Pessoa {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Integer id;
+public class Pessoa extends BaseEntity {
 
     @Column(name = "NOME", length = 150, nullable = false)
     private String nome;
@@ -37,5 +33,4 @@ public class Pessoa {
     private Boolean temImagem;
 
     private transient String image;
-
 }

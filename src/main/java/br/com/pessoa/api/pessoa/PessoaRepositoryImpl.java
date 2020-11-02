@@ -1,5 +1,6 @@
 package br.com.pessoa.api.pessoa;
 
+import br.com.pessoa.api.core.Status;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -34,8 +35,8 @@ public class PessoaRepositoryImpl implements PessoaRepository {
 
         query.limit(pageable.getPageSize()).offset(pageable.getOffset());
 
-        Optional.ofNullable(filtro).ifPresent(pessoaFiltro -> {
-            var where = new BooleanBuilder();
+        var where = new BooleanBuilder();
+        Optional.ofNullable(filtro).ifPresentOrElse(pessoaFiltro -> {
             if (StringUtils.isNotBlank(pessoaFiltro.getNome())) {
                 where.and(pessoa.nome.like("%" + pessoaFiltro.getNome() + "%"));
             }
@@ -52,9 +53,14 @@ public class PessoaRepositoryImpl implements PessoaRepository {
                 where.and(pessoa.dataDeNascimento.eq(pessoaFiltro.getDataDeNascimento()));
             }
 
-            query.where(where);
-        });
-
+            if (pessoaFiltro.getStatus() != null) {
+                where.and(pessoa.status.eq(pessoaFiltro.getStatus()));
+            } else {
+                where.and(pessoa.status.eq(Status.ATIVO));
+            }
+            }, () -> where.and(pessoa.status.eq(Status.ATIVO))
+        );
+        query.where(where);
         query.orderBy(pessoa.id.asc());
 
         var jpaQueryResults = query.fetchResults();

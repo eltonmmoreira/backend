@@ -4,14 +4,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 
-public abstract class RestControllerImpl<T, ID extends Serializable>
+public abstract class RestControllerImpl<T extends BaseEntity, ID extends Serializable>
         implements RestController<T, ID> {
 
     protected abstract CrudService<T, ID> getService();
 
     @Override
     @GetMapping("/{id}")
-    public T findById(@PathVariable ID id) throws Exception {
+    public T findById(@PathVariable ID id) {
         return getService().findById(id);
     }
 

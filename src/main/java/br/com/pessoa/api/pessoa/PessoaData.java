@@ -1,11 +1,11 @@
 package br.com.pessoa.api.pessoa;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import br.com.pessoa.api.core.BaseCrudRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface PessoaData extends JpaRepository<Pessoa, Integer> {
+public interface PessoaData extends BaseCrudRepository<Pessoa, Integer> {
 
     @Transactional
     @Modifying

@@ -1,6 +1,6 @@
 package br.com.pessoa.api.file;
 
-import br.com.pessoa.api.core.JpaCrudServiceImpl;
+import br.com.pessoa.api.core.JpaBaseCrudServiceImpl;
 import br.com.pessoa.api.file.event.PostFileUploadEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +17,7 @@ import java.util.Base64;
 import java.util.Optional;
 
 @Service
-public class FileServiceImpl extends JpaCrudServiceImpl<File, Integer> implements FileService {
+public class FileServiceImpl extends JpaBaseCrudServiceImpl<File, Integer> implements FileService {
 
     private final Path root;
 
