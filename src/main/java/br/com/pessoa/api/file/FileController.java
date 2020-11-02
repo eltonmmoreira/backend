@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 @RequestMapping("file")
 public class FileController {
 
-    private FileService fileService;
+    private final FileService fileService;
 
     public FileController(FileService fileService) {
         this.fileService = fileService;

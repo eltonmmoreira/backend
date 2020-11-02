@@ -33,7 +33,7 @@ public class PessoaValidator {
         }
     }
 
-    private Consumer<Pessoa> validateEmail() {
+    public Consumer<Pessoa> validateEmail() {
         return (entity) -> {
             var emails = entity.getEmail();
             if (StringUtils.isNotBlank(emails)) {
@@ -49,7 +49,7 @@ public class PessoaValidator {
         };
     }
 
-    private Consumer<Pessoa> validateCpf() {
+    public Consumer<Pessoa> validateCpf() {
         return (entity) -> {
             if (StringUtils.isNotBlank(entity.getCpf())) {
                 pessoaData.findByCpfAndStatus(entity.getCpf(), Status.ATIVO).ifPresent(pessoa -> {

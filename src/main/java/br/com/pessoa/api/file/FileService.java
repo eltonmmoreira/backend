@@ -11,4 +11,5 @@ public interface FileService extends SimpleCrudService<File, Integer> {
     void upload(MultipartFile multipartFile, Integer idPessoa);
 
     Optional<String> findFile(Integer id) throws IOException;
+
 }

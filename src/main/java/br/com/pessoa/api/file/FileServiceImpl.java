@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +47,8 @@ public class FileServiceImpl extends JpaBaseCrudServiceImpl<File, Integer> imple
             extensaoValidate(multipartFile);
             createDirectory();
 
-            var extension = getExtensionByFilename(multipartFile.getOriginalFilename()).orElseThrow();
+            var extension = FileOperations.of()
+                    .getExtensionByFilename(multipartFile.getOriginalFilename()).orElseThrow();
             var file = save(multipartFile, idPessoa, extension);
 
             try {
@@ -71,7 +71,7 @@ public class FileServiceImpl extends JpaBaseCrudServiceImpl<File, Integer> imple
     }
 
     private void extensaoValidate(MultipartFile file) {
-        var extension = getExtensionByFilename(file.getOriginalFilename()).orElseThrow();
+        var extension = FileOperations.of().getExtensionByFilename(file.getOriginalFilename()).orElseThrow();
         if (!extensoesValidas.contains(extension)) {
             getLog().error("Extensão inválida");
             throw new RuntimeException(MessageUtil.get("file.extensao.invalida"));
@@ -115,20 +115,9 @@ public class FileServiceImpl extends JpaBaseCrudServiceImpl<File, Integer> imple
             return Optional.empty();
         }
 
-        var filename = file.get().getNome() + "." + file.get().getExtensao();
-
-        byte[] fileContent = Files.readAllBytes(
-                Paths.get(root + root.getFileSystem().getSeparator() + filename)
-        );
-        var data = String.format("data:image/%s;base64,", file.get().getExtensao());
-        getLog().info(String.format("Arquivo %s carregado com sucesso!", filename));
-        return Optional.of(data + Base64.getEncoder().encodeToString(fileContent));
-    }
-
-    private Optional<String> getExtensionByFilename(String filename) {
-        return Optional.ofNullable(filename)
-                .filter(f -> f.contains("."))
-                .map(f -> f.substring(filename.lastIndexOf(".") + 1));
+        var fileOperations = FileOperations.of(root);
+        byte[] fileContent = fileOperations.getFileContent(file.get());
+        return fileOperations.getFileBase64(file.get(), fileContent);
     }
 
 }
