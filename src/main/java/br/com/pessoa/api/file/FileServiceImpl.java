@@ -2,6 +2,7 @@ package br.com.pessoa.api.file;
 
 import br.com.pessoa.api.core.JpaBaseCrudServiceImpl;
 import br.com.pessoa.api.file.event.PostFileUploadEvent;
+import br.com.pessoa.api.util.MessageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,6 +26,8 @@ public class FileServiceImpl extends JpaBaseCrudServiceImpl<File, Integer> imple
     private final ApplicationEventPublisher publisher;
 
     private final FileData fileData;
+
+    private static final List<String> extensoesValidas = List.of("png", "jpg", "jpeg", "bmp");
 
     @Override
     protected JpaRepository<File, Integer> getData() {
@@ -41,10 +45,8 @@ public class FileServiceImpl extends JpaBaseCrudServiceImpl<File, Integer> imple
     @Override
     public void upload(MultipartFile multipartFile, Integer idPessoa) {
         try {
-            if (!Files.exists(root)) {
-                getLog().info(String.format("Criando diretório %s", root));
-                Files.createDirectory(root);
-            }
+            extensaoValidate(multipartFile);
+            createDirectory();
 
             var extension = getExtensionByFilename(multipartFile.getOriginalFilename()).orElseThrow();
             var file = save(multipartFile, idPessoa, extension);
@@ -58,6 +60,21 @@ public class FileServiceImpl extends JpaBaseCrudServiceImpl<File, Integer> imple
             }
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private void createDirectory() throws IOException {
+        if (!Files.exists(root)) {
+            getLog().info(String.format("Criando diretório %s", root));
+            Files.createDirectory(root);
+        }
+    }
+
+    private void extensaoValidate(MultipartFile file) {
+        var extension = getExtensionByFilename(file.getOriginalFilename()).orElseThrow();
+        if (!extensoesValidas.contains(extension)) {
+            getLog().error("Extensão inválida");
+            throw new RuntimeException(MessageUtil.get("file.extensao.invalida"));
         }
     }
 
