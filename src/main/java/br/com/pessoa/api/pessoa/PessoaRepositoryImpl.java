@@ -38,11 +38,11 @@ public class PessoaRepositoryImpl implements PessoaRepository {
         var where = new BooleanBuilder();
         Optional.ofNullable(filtro).ifPresentOrElse(pessoaFiltro -> {
             if (StringUtils.isNotBlank(pessoaFiltro.getNome())) {
-                where.and(pessoa.nome.like("%" + pessoaFiltro.getNome() + "%"));
+                where.and(pessoa.nome.likeIgnoreCase("%" + pessoaFiltro.getNome() + "%"));
             }
 
             if (StringUtils.isNotBlank(pessoaFiltro.getCpf())) {
-                where.and(pessoa.cpf.likeIgnoreCase("%" + pessoaFiltro.getCpf().replaceAll("\\D+", "") + "%"));
+                where.and(pessoa.cpf.like("%" + pessoaFiltro.getCpf().replaceAll("\\D+", "") + "%"));
             }
 
             if (StringUtils.isNotBlank(pessoaFiltro.getEmail())) {
