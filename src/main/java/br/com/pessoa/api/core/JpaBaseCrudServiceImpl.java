@@ -1,10 +1,8 @@
 package br.com.pessoa.api.core;
 
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.NoRepositoryBean;
-import org.springframework.stereotype.Service;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;

@@ -42,6 +42,7 @@ public class FileServiceImpl extends JpaBaseCrudServiceImpl<File, Integer> imple
     public void upload(MultipartFile multipartFile, Integer idPessoa) {
         try {
             if (!Files.exists(root)) {
+                getLog().info(String.format("Criando diretório %s", root));
                 Files.createDirectory(root);
             }
 
@@ -49,6 +50,7 @@ public class FileServiceImpl extends JpaBaseCrudServiceImpl<File, Integer> imple
             var file = save(multipartFile, idPessoa, extension);
 
             try {
+                getLog().info(String.format("Criando arquivo %s", file.getNome() + "." + file.getExtensao()));
                 createFile(multipartFile, idPessoa, extension);
             } catch (IOException e) {
                 fileData.deleteById(file.getId());
@@ -102,6 +104,7 @@ public class FileServiceImpl extends JpaBaseCrudServiceImpl<File, Integer> imple
                 Paths.get(root + root.getFileSystem().getSeparator() + filename)
         );
         var data = String.format("data:image/%s;base64,", file.get().getExtensao());
+        getLog().info(String.format("Arquivo %s carregado com sucesso!", filename));
         return Optional.of(data + Base64.getEncoder().encodeToString(fileContent));
     }
 
