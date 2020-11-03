@@ -20,11 +20,14 @@ postgresql
 ## Configuration
 <pre><code> 
 uploadPath= 
-Caminho para gravar os arquivos selecionados para upload. Caso não informafo é gravado por padrão na raiz do projeto.
+Caminho para gravar os arquivos selecionados para upload. Caso não informado é gravado por padrão na raiz do projeto.
 
+Configuração porta padrão da aplicação
 server.port=8080
 
 ## PostgreSQL
+Criar um banco com nome database, usuário e senha conforme configurações abaixo:
+
 spring.datasource.url=jdbc:postgresql://localhost:5432/database
 spring.datasource.username=postgres
 spring.datasource.password=root
