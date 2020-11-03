@@ -10,6 +10,7 @@ Clone o repositório:
 ## Pre-requisites
 <pre><code>
 JAVA 15
+Maven
 postgresql
 </code></pre>
 
