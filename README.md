@@ -4,7 +4,7 @@ Clone o repositório:
 <pre><code> https://github.com/eltonmmoreira/backend.git</code></pre>
 
 # Tecnologias:
-<pre><code> Spring Boot, JPA, Postgresql, JAVA, Hibernate, REST<code></pre>
+<pre><code> Spring Boot, JPA, Postgresql, JAVA, Hibernate, REST</code></pre>
 
 # Building and running the application
 ## Pre-requisites
