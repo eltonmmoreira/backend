@@ -33,6 +33,12 @@ spring.datasource.username=postgres
 spring.datasource.password=root
 </code></pre>
 
+# Documentation
+<pre><code>
+http://localhost:8080/api-documentation
+http://localhost:8080/documentation
+</code></pre>
+
 # Application 
 <pre><code>API REST de cadastro de pessoas utilizando as tecnologias acima. 
 Listagem e cadastro de pessoas, operações de CRUD. Upload de Imagem.</code></pre>
