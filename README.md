@@ -4,7 +4,7 @@ Clone o repositório:
 <pre><code> https://github.com/eltonmmoreira/backend.git</code></pre>
 
 # Tecnologias:
-<pre><code> Spring Boot, JPA, Postgresql, JAVA, Hibernate, REST </pre>
+<pre><code> Spring Boot, JPA, Postgresql, JAVA, Hibernate, REST<code></pre>
 
 # Building and running the application
 ## Pre-requisites
@@ -35,5 +35,4 @@ spring.datasource.password=root
 
 # Application 
 <pre><code>API REST de cadastro de pessoas utilizando as tecnologias acima. 
-Listagem e cadastro de pessoas, operações de CRUD. Upload de Imagem.
-</code></pre>
+Listagem e cadastro de pessoas, operações de CRUD. Upload de Imagem.</code></pre>
