@@ -30,4 +30,6 @@ spring.datasource.password=root
 </code></pre>
 
 # Application 
-<pre><code>API REST de cadastro de pessoas utilizando as tecnologias acima. Listagem e cadastro de pessoas, operações de CRUD. Upload de Imagem.</code></pre>
+<pre><code>API REST de cadastro de pessoas utilizando as tecnologias acima. 
+Listagem e cadastro de pessoas, operações de CRUD. Upload de Imagem.
+</code></pre>
