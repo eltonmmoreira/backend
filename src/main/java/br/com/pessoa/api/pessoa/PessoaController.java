@@ -4,7 +4,6 @@ import br.com.pessoa.api.core.CrudService;
 import br.com.pessoa.api.core.RestControllerImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
